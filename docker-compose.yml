@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  php-fpm:
+    build: 
+      context: .
+      target: php-fpm
+    image: cycleops/php-demo:php-fpm
+    ports:
+    - 9000:9000
+    volumes:
+    - ./www/html/:/var/www/html/
+
+  nginx:
+    build: 
+      context: .
+      target: nginx
+    image: cycleops/php-demo:nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./www/html/:/var/www/html/
+    restart: on-failure
+
+  mysql:
+    image: mysql:8.0
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+
+volumes:
+  mysql_data:
